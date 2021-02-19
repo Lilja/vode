@@ -1,0 +1,30 @@
+{
+  "name": "vode",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@types/argparse": "^2.0.5",
+    "@types/yargs": "^16.0.0",
+    "argparse": "^2.0.1",
+    "form-data": "^3.0.0",
+    "jszip": "^3.6.0",
+    "node-fetch": "^2.6.1",
+    "yargs": "^16.2.0",
+    "youtube-dl": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.8",
+    "@typescript-eslint/eslint-plugin": "^4.15.1",
+    "@typescript-eslint/parser": "^4.15.1",
+    "eslint": "^7.20.0",
+    "typescript": "^4.1.5"
+  },
+  "scripts": {
+    "extract": "tsc && node ./dist/index.js",
+    "lint": "npx eslint . --ext .ts"
+  },
+  "bin": {
+    "vode": "./dist/index.js"
+  }
+}
