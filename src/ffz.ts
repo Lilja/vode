@@ -7,10 +7,13 @@ export async function loadFFZ(channelName: string): Promise<EmoteToResolve[]> {
     const jsonResp = await resp.json()
 
     const id = jsonResp['room']['_id']
-    return jsonResp['sets'][id]['emoticons'].map(
+    const ffzEmotes = jsonResp['sets'][id]['emoticons'].map(
         (k: {name: string, urls: {'1': string}}) => ({
             code: k.name,
             url: k.urls['1']
         })
     )
+    console.log(`Loaded ${ffzEmotes.length} ffz emotes`)
+
+    return ffzEmotes
 }

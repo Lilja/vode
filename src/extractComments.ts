@@ -1,7 +1,14 @@
 import fetch from 'node-fetch'
+import { loadEmotes } from './extractEmotes'
 import {CLIENT_ID} from './main'
 
-const comments: {[key: string]: unknown} = {}
+export type Comments = Record<string, unknown>[]
+
+type Comment = {
+    _id: string,
+    content_offset_seconds: number
+}
+const comments: {[key: string]: Comment} = {}
 
 class Log {
     private logs: string[] = []
@@ -15,12 +22,13 @@ class Log {
     }
 }
 async function req(URL: string) {
-    const _req = await fetch(URL, {
+    const headers = {
         headers: {
             "Client-ID": CLIENT_ID,
             "Accept": "application/vnd.twitchtv.v5+json"
         }
-    })
+    }
+    const _req = await fetch(URL, headers)
     
     return await _req.json()
 }
@@ -36,7 +44,7 @@ async function startWork(
     const logs = new Log(worker)
     logs.push(worker, 'Starting work', 'starting offset', startingOffset)
     let totalInsertions = 0
-    const checkCommentAndAssign = (comment: {"_id": string}) => {
+    const checkCommentAndAssign = (comment: Comment) => {
         if (!comments[comment._id]) {
             comments[comment._id] = comment
             return true
@@ -108,18 +116,20 @@ export async function loadComments(
     videoID: string,
     videoLength: number,
     workers = 10
-): Promise<Record<string, unknown>[]> {
+): Promise<Comments> {
     const amountOfTime = videoLength / workers
     const offsets = Array.from({length: workers}, (x, i) => Math.floor(amountOfTime * i))
 
     console.log('Video length', videoLength)
-    console.log('Offsets', offsets, offsets.length, 'workers', workers)
+    console.log('Offsets', offsets, 'workers', workers)
+    const timeStart = Date.now()
     const work = offsets.map(
         (offset, index) => startWork(videoID, offset, index)
     )
 
     console.log(`Waiting for ${work.length} promises to resolve...`)
     const workerLogs = await Promise.all(work)
+    const timeEnd = Date.now()
 
     const sortedLogs = workerLogs.sort((a, b) => a.logs.workerID > b.logs.workerID ? 1 : -1)
     const totalCollisions = workerLogs.map(a => a.numberOfCollisions).reduce((prev, obj) => prev + obj, 0)
@@ -129,6 +139,7 @@ export async function loadComments(
         }
         console.log('-------------')
     }
+    console.log('Download complete after', (timeStart - timeEnd) / 1000)
     console.log('Total collisions', totalCollisions)
 
     console.log('Sorting comments')

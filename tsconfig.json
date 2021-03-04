@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "downlevelIteration": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
@@ -11,12 +12,15 @@
   },
   "files": [
     "src/main.ts",
+    "src/index.ts",
+    "src/extractComments.ts",
+    "src/globaltwitch.ts",
+    "src/extractMetaData.ts",
     "src/extractEmotes.ts",
-    "src/extractMods.ts",
     "src/extractVod.ts",
     "src/ffz.ts",
     "src/bttv.ts",
-    "src/twe.ts",
+    "src/twe.ts"
   ],
   "exclude": ["node_modules", "**/*.spec.ts"]
   }

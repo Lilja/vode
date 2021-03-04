@@ -4,6 +4,7 @@ export type EmoteToResolve = {code: string, url: string}
 import { loadTwe, channelNameToID } from './twe'
 import { loadBttv } from './bttv'
 import { loadFFZ } from './ffz'
+import { loadGlobalEmotes } from './globaltwitch'
 import fetch from "node-fetch";
 
 type EmoteStream = {
@@ -18,8 +19,10 @@ async function loadAllEmotes(
     const tweEmotes = await loadTwe(channelID)
     const bttvEmotes = await loadBttv(channelID)
     const ffzEmotes = await loadFFZ(channelName)
+    const globalEmotes = await loadGlobalEmotes()
 
-    const emoteUrls = tweEmotes.concat(bttvEmotes).concat(ffzEmotes).map(
+    const allEmotes = tweEmotes.concat(bttvEmotes).concat(ffzEmotes).concat(globalEmotes)
+    const emoteUrls = allEmotes.map(
         (k: {code: string, url: string}) => downloadFilenameToUrl(k.code, k.url)
     )
     console.log(`Loading ${emoteUrls.length} emotes`)

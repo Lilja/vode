@@ -9,23 +9,31 @@ import {loadEmotes, loadBadges} from './extractEmotes'
 import JSZip = require('jszip')
 import { loadMetaData } from './extractMetaData';
 import { downloadVodInfo } from './extractVod'
-import { loadComments } from './extractComments'
+import { loadComments, Comments } from './extractComments'
 
+type BlobOutput = {
+  zipFile: Blob,
+  comments: Comments
+}
+type BufferOutput = {
+  zipFile: Buffer,
+  comments: Comments
+}
 export async function main(
   channelName: string,
   videoID: string,
   zipBufferType: "nodebuffer"
-): Promise<Buffer>;
+): Promise<BufferOutput>;
 export async function main(
   channelName: string,
   videoID: string,
   zipBufferType: "blob"
-): Promise<Blob>
+): Promise<BlobOutput>
 export async function main(
   channelName: string,
   videoID: string,
   zipBufferType: "nodebuffer" | "blob"
-): Promise<Buffer | Blob> {
+): Promise<BufferOutput | BlobOutput> {
   console.log('Channel', channelName)
 
   const zip = new JSZip();
@@ -33,7 +41,6 @@ export async function main(
 
   for(const entry of emotes) {
       zip.file(entry.fileName, entry.body)
-
   }
   const metadata = await loadMetaData(channelName, channelID)
   zip.file('metadata.json', JSON.stringify(metadata))
@@ -49,10 +56,14 @@ export async function main(
 
   const vodInfo = await downloadVodInfo(videoID)
   const comments = await loadComments(videoID, vodInfo.length)
-  zip.file(videoID + '.json', JSON.stringify(comments))
+  // zip.file(videoID + '.json', JSON.stringify(comments))
 
   console.log('Generating zip')
-  const content = await zip.generateAsync({type: zipBufferType})
+  const zipFile = await zip.generateAsync({type: zipBufferType})
   console.log('Generating zip done')
-  return content
+  const cnt = {
+    zipFile,
+    comments
+  }
+  return cnt as BufferOutput | BlobOutput
 }

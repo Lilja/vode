@@ -8,6 +8,8 @@ const argv = yargs(process.argv.slice(2)).options({
 }).argv;
 
 (async function () {
-  const content = await main(argv.channel, argv.video_id, "nodebuffer")
-  await fs.promises.writeFile(`${argv.video_id}.zip`, content)
+  const {zipFile, comments} = await main(argv.channel, argv.video_id, "nodebuffer")
+  await fs.promises.writeFile(`${argv.video_id}.zip`, zipFile)
+  const commentsStringified = JSON.stringify(comments)
+  await fs.promises.writeFile(`${argv.video_id}.json`, commentsStringified)
 })()

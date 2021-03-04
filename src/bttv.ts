@@ -24,7 +24,7 @@ export async function loadBttv(channelID: string): Promise<EmoteToResolve[]> {
     return channelEmotes.concat(sharedEmotes).concat(globalEmotes)
 }
 
-export async function loadGlobalBttvEmotes(): Promise<EmoteToResolve[]> {
+async function loadGlobalBttvEmotes(): Promise<EmoteToResolve[]> {
     const resp = await fetch(BTTV_GLOBAL_EMOTES_URL)
     const json = await resp.json()
     return (
