@@ -29,7 +29,7 @@ async function req(URL: string) {
         }
     }
     const _req = await fetch(URL, headers)
-    
+
     return await _req.json()
 }
 
@@ -40,7 +40,7 @@ async function startWork(
 ) {
     const collisions: string[] = []
     let numberOfCollisions = 0
-    
+
     const logs = new Log(worker)
     logs.push(worker, 'Starting work', 'starting offset', startingOffset)
     let totalInsertions = 0
@@ -98,7 +98,7 @@ async function startWork(
     }
     while (cursor != null) 
     logs.push(
-        worker, 
+        worker,
         'total insertions', totalInsertions,
         'last insertion offset', lastContentOffsetSeconds,
         'starting insertion', startingOffset,

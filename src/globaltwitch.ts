@@ -8,7 +8,6 @@ type InternalEmoteIdWithURL = {
 
 async function loadEmoteName(k: InternalEmoteIdWithURL[]): Promise<{code: string, id: string}[]> {
     const _emotes = k.map(a => a.internalEmoteID).join(',')
-    console.log('Iga', _emotes)
     const resp = await fetch('https://api.twitchemotes.com/api/v4/emotes?id=' + _emotes)
     return await resp.json()
 }
